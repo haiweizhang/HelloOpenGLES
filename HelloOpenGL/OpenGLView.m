@@ -61,6 +61,7 @@
         [self setupContext];
         [self setupRenderBuffer];
         [self setupFrameBuffer];
+        [self compileShaders];
         [self render];
         
     }
@@ -76,11 +77,52 @@
         NSLog(@"Error load shader %@", shaderName);
         exit(1);
     }
+    //create shader handler
     GLuint shaderHandler = glCreateShader(shaderType);
     const char* shaderStringUTF8 = [shaderString UTF8String];
     int shaderStringLength = [shaderString length];
+    //add shader source
     glShaderSource(shaderHandler, 1, &shaderStringUTF8, &shaderStringLength);
+    //compile shader
+    glCompileShader(shaderHandler);
     
+    GLint compileSuccess;
+    glGetShaderiv(shaderHandler, GL_COMPILE_STATUS, &compileSuccess);
+    if (compileSuccess == GL_FALSE) {
+        GLchar msg[256];
+        glGetShaderInfoLog(shaderHandler, sizeof(msg), 0 , msg);
+        NSLog(@"%s", msg);
+        exit(1);
+    }
+    return shaderHandler;
+}
+
+- (void)compileShaders{
+    
+    GLuint vertexShader = [self compileShader:@"SimpleVertex" withType:GL_VERTEX_SHADER];
+    GLuint fragmentShader = [self compileShader:@"SimpleFragment" withType:GL_FRAGMENT_SHADER];
+    
+    GLuint programHandler = glCreateProgram();
+    glAttachShader(programHandler, vertexShader);
+    glAttachShader(programHandler, fragmentShader);
+    glLinkProgram(programHandler);
+    
+    GLint linkSuccess;
+    glGetProgramiv(programHandler,GL_LINK_STATUS, &linkSuccess);
+    if (linkSuccess == GL_FALSE) {
+        char msg[256];
+        glGetProgramInfoLog(programHandler, sizeof(msg), 0, msg);
+        NSLog(@"%s", msg);
+        exit(1);
+    }
+    
+    glUseProgram(programHandler);
+    
+    _positionSlot = glGetAttribLocation(programHandler, "Position");
+    _colorSlot = glGetAttribLocation(programHandler, "SourceColor");
+    
+    glEnableVertexAttribArray(_positionSlot);
+    glEnableVertexAttribArray(_colorSlot);
 }
 
 /*
