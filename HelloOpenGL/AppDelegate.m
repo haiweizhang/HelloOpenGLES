@@ -8,8 +8,6 @@
 
 #import "AppDelegate.h"
 
-//#synthesize glView=_glView;
-
 @implementation AppDelegate
 
 
