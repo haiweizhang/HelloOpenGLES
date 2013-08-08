@@ -7,6 +7,7 @@
 //
 
 #import "OpenGLView.h"
+#include "CC3GLMatrix.h"
 
 typedef struct {
     float Position[3];
@@ -14,10 +15,10 @@ typedef struct {
 } Vertex;
 
 const Vertex Vertices[] = {
-    {{1, -1, 0}, {1, 0, 0, 1}},
-    {{1, 1, 0}, {0, 1, 0, 1}},
-    {{-1, 1, 0}, {0, 0, 1, 1}},
-    {{-1, -1, 0}, {0, 0, 0, 1}}
+    {{1, -1, -7}, {1, 0, 0, 1}},
+    {{1, 1, -7}, {0, 1, 0, 1}},
+    {{-1, 1, -7}, {0, 0, 1, 1}},
+    {{-1, -1, -7}, {0, 0, 0, 1}}
 };
 
 const GLubyte Indices[] = {
@@ -67,15 +68,19 @@ const GLubyte Indices[] = {
     glClearColor(0, 144.0/255.0, 55.0/255.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     
+    CC3GLMatrix *modelView = [CC3GLMatrix matrix];
+    float h = 4.0f * self.frame.size.height / self.frame.size.width;
+    [modelView populateFromFrustumLeft:-2 andRight:2 andBottom:-h/2 andTop:h/2 andNear:4 andFar:10];
+
+    glUniformMatrix4fv(_projectionUniform, 1, 0, modelView.glMatrix);
+    
+    
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
     
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
     
-    
-    
     glDrawElements(GL_TRIANGLES, sizeof(Vertices)/(sizeof(Vertices[0])), GL_UNSIGNED_BYTE, 0);
-    
     
     [_context presentRenderbuffer:GL_RENDERBUFFER];
 }
@@ -149,6 +154,8 @@ const GLubyte Indices[] = {
     
     _positionSlot = glGetAttribLocation(programHandler, "Position");
     _colorSlot = glGetAttribLocation(programHandler, "SourceColor");
+    
+    _projectionUniform = glGetUniformLocation(programHandler, "Projection");
     
     glEnableVertexAttribArray(_positionSlot);
     glEnableVertexAttribArray(_colorSlot);
