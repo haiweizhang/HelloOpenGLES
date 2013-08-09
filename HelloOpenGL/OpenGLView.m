@@ -82,11 +82,13 @@ const GLubyte Indices[] = {
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderBuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
 }
 
 - (void)render: (CADisplayLink*)displayLink {
     glClearColor(0, 144.0/255.0, 55.0/255.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
     
     CC3GLMatrix *projection = [CC3GLMatrix matrix];
     float h = 4.0f * self.frame.size.height / self.frame.size.width;
@@ -119,6 +121,7 @@ const GLubyte Indices[] = {
         // Initialization code
         [self setupLayer];
         [self setupContext];
+        [self setupDepthBuffer];
         [self setupRenderBuffer];
         [self setupFrameBuffer];
         [self compileShaders];
@@ -207,6 +210,13 @@ const GLubyte Indices[] = {
     CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(render:)];
     
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+}
+
+- (void)setupDepthBuffer{
+    glGenRenderbuffers(1, &_depthRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, self.frame.size.width, self.frame.size.height);
+    
 }
 /*
 // Only override drawRect: if you perform custom drawing.
