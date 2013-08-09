@@ -80,7 +80,7 @@ const GLubyte Indices[] = {
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
     
-    glDrawElements(GL_TRIANGLES, sizeof(Vertices)/(sizeof(Vertices[0])), GL_UNSIGNED_BYTE, 0);
+    glDrawElements(GL_TRIANGLES, sizeof(Indices)/(sizeof(Indices[0])), GL_UNSIGNED_BYTE, 0);
     
     [_context presentRenderbuffer:GL_RENDERBUFFER];
 }
