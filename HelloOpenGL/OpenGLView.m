@@ -15,10 +15,10 @@ typedef struct {
 } Vertex;
 
 const Vertex Vertices[] = {
-    {{1, -1, -7}, {1, 0, 0, 1}},
-    {{1, 1, -7}, {0, 1, 0, 1}},
-    {{-1, 1, -7}, {0, 0, 1, 1}},
-    {{-1, -1, -7}, {0, 0, 0, 1}}
+    {{1, -1, 0}, {1, 0, 0, 1}},
+    {{1, 1, 0}, {0, 1, 0, 1}},
+    {{-1, 1, 0}, {0, 0, 1, 1}},
+    {{-1, -1, 0}, {0, 0, 0, 1}}
 };
 
 const GLubyte Indices[] = {
@@ -64,16 +64,23 @@ const GLubyte Indices[] = {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderBuffer);
 }
 
-- (void)render{
+- (void)render: (CADisplayLink*)displayLink {
     glClearColor(0, 144.0/255.0, 55.0/255.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     
-    CC3GLMatrix *modelView = [CC3GLMatrix matrix];
+    CC3GLMatrix *projection = [CC3GLMatrix matrix];
     float h = 4.0f * self.frame.size.height / self.frame.size.width;
-    [modelView populateFromFrustumLeft:-2 andRight:2 andBottom:-h/2 andTop:h/2 andNear:4 andFar:10];
-
-    glUniformMatrix4fv(_projectionUniform, 1, 0, modelView.glMatrix);
+    [projection populateFromFrustumLeft:-2 andRight:2 andBottom:-h/2 andTop:h/2 andNear:4 andFar:10];
+   
+    glUniformMatrix4fv(_projectionUniform, 1, 0, projection.glMatrix);
     
+    
+    CC3GLMatrix *modelview = [CC3GLMatrix matrix];
+    [modelview populateFromTranslation:CC3VectorMake(sin(CACurrentMediaTime()), 0, -7)];
+    _currentRotation += displayLink.duration * 90;
+    [modelview rotateBy:CC3VectorMake(_currentRotation, _currentRotation, 0)];
+    
+    glUniformMatrix4fv(_modelViewUniform, 1, 0, modelview.glMatrix);
     
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
     
@@ -96,7 +103,8 @@ const GLubyte Indices[] = {
         [self setupFrameBuffer];
         [self compileShaders];
         [self setupVBOs];
-        [self render];
+        //[self render];
+        [self setupDisplayLink];
         
     }
     return self;
@@ -156,6 +164,7 @@ const GLubyte Indices[] = {
     _colorSlot = glGetAttribLocation(programHandler, "SourceColor");
     
     _projectionUniform = glGetUniformLocation(programHandler, "Projection");
+    _modelViewUniform = glGetUniformLocation(programHandler, "Modelview");
     
     glEnableVertexAttribArray(_positionSlot);
     glEnableVertexAttribArray(_colorSlot);
@@ -171,6 +180,13 @@ const GLubyte Indices[] = {
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+}
+
+- (void)setupDisplayLink {
+    
+    CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(render:)];
+    
+    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 }
 /*
 // Only override drawRect: if you perform custom drawing.
