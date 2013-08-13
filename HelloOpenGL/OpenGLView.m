@@ -15,7 +15,7 @@ typedef struct {
     float TexCoord[2];
 } Vertex;
 
-#define TEX_COORD_MAX   1
+#define TEX_COORD_MAX   4
 
 const Vertex Vertices[] = {
     // Front
