@@ -12,17 +12,18 @@
 typedef struct {
     float Position[3];
     float Color[4];
+    float TexCoord[2];
 } Vertex;
 
 const Vertex Vertices[] = {
-    {{1, -1, 0}, {1, 0, 0, 1}},
-    {{1, 1, 0}, {1, 0, 0, 1}},
-    {{-1, 1, 0}, {0, 1, 0, 1}},
-    {{-1, -1, 0}, {0, 1, 0, 1}},
-    {{1, -1, -1}, {1, 0, 0, 1}},
-    {{1, 1, -1}, {1, 0, 0, 1}},
-    {{-1, 1, -1}, {0, 1, 0, 1}},
-    {{-1, -1, -1}, {0, 1, 0, 1}}
+    {{1, -1, 0}, {1, 0, 0, 1}, {1, 0}},
+    {{1, 1, 0}, {1, 0, 0, 1}, {1, 1}},
+    {{-1, 1, 0}, {0, 1, 0, 1}, {0, 1}},
+    {{-1, -1, 0}, {0, 1, 0, 1}, {0, 0}},
+    {{1, -1, -1}, {1, 0, 0, 1}, {1, 0}},
+    {{1, 1, -1}, {1, 0, 0, 1}, {1, 1}},
+    {{-1, 1, -1}, {0, 1, 0, 1}, {0, 1}},
+    {{-1, -1, -1}, {0, 1, 0, 1}, {0, 0}}
 };
 
 const GLubyte Indices[] = {
@@ -109,6 +110,14 @@ const GLubyte Indices[] = {
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
     
+    glVertexAttribPointer(_texCoordSlot, 2, GL_FLOAT, GL_FALSE,
+                          sizeof(Vertex), (GLvoid*) (sizeof(float) * 7));
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _floorTexture);
+    glUniform1i(_textureUniform, 0);
+    
+    
     glDrawElements(GL_TRIANGLES, sizeof(Indices)/(sizeof(Indices[0])), GL_UNSIGNED_BYTE, 0);
     
     [_context presentRenderbuffer:GL_RENDERBUFFER];
@@ -126,6 +135,10 @@ const GLubyte Indices[] = {
         [self setupFrameBuffer];
         [self compileShaders];
         [self setupVBOs];
+        
+        _floorTexture = [self setupTexture:@"tile_floor.png"];
+        _fishTexture = [self setupTexture:@"item_powerup_fish.png"];
+        
         //[self render];
         [self setupDisplayLink];
         
@@ -191,6 +204,10 @@ const GLubyte Indices[] = {
     
     glEnableVertexAttribArray(_positionSlot);
     glEnableVertexAttribArray(_colorSlot);
+    
+    _texCoordSlot = glGetAttribLocation(programHandler, "TexCoordIn");
+    glEnableVertexAttribArray(_texCoordSlot);
+    _textureUniform = glGetUniformLocation(programHandler, "Texture");
 }
 
 - (void)setupVBOs{
@@ -217,6 +234,29 @@ const GLubyte Indices[] = {
     glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, self.frame.size.width, self.frame.size.height);
     
+}
+
+- (GLuint)setupTexture:(NSString*) fileName{
+    CGImageRef spriteImage = [UIImage imageNamed:fileName].CGImage;
+    if (! spriteImage) {
+        NSLog(@"failed to load image %@", spriteImage);
+        exit(1);
+    }
+    size_t width = CGImageGetWidth(spriteImage);
+    size_t height =CGImageGetHeight(spriteImage);   
+    
+    GLubyte *spriteData = (GLubyte*)calloc(width*height*4, sizeof(GLubyte));
+    CGContextRef spriteContext = CGBitmapContextCreate(spriteData, width, height, 8, width*4, CGImageGetColorSpace(spriteImage), kCGImageAlphaPremultipliedLast);
+    CGContextDrawImage(spriteContext, CGRectMake(0, 0, width, height), spriteImage);
+    CGContextRelease(spriteContext);
+    
+    GLuint texName;
+    glGenTextures(1, &texName);
+    glBindTexture(GL_TEXTURE_2D, texName);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+    free(spriteData);
+    return texName;
 }
 /*
 // Only override drawRect: if you perform custom drawing.

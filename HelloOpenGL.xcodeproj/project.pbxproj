@@ -11,6 +11,8 @@
 		9B27BE1317B384C800DA42E1 /* CC3GLMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B27BE0B17B384C800DA42E1 /* CC3GLMatrix.m */; };
 		9B27BE1417B384C800DA42E1 /* CC3Kazmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 9B27BE0C17B384C800DA42E1 /* CC3Kazmath.c */; };
 		9B27BE1517B384C800DA42E1 /* CC3Math.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B27BE1017B384C800DA42E1 /* CC3Math.m */; };
+		9B4DF06917B4D85700AD5811 /* item_powerup_fish.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B4DF06717B4D85700AD5811 /* item_powerup_fish.png */; };
+		9B4DF06A17B4D85700AD5811 /* tile_floor.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B4DF06817B4D85700AD5811 /* tile_floor.png */; };
 		9BB2714317B2267900D85FFE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB2714217B2267900D85FFE /* UIKit.framework */; };
 		9BB2714517B2267900D85FFE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB2714417B2267900D85FFE /* Foundation.framework */; };
 		9BB2714717B2267900D85FFE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB2714617B2267900D85FFE /* CoreGraphics.framework */; };
@@ -53,6 +55,8 @@
 		9B27BE0F17B384C800DA42E1 /* CC3Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CC3Math.h; sourceTree = "<group>"; };
 		9B27BE1017B384C800DA42E1 /* CC3Math.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CC3Math.m; sourceTree = "<group>"; };
 		9B27BE1117B384C800DA42E1 /* ccTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ccTypes.h; sourceTree = "<group>"; };
+		9B4DF06717B4D85700AD5811 /* item_powerup_fish.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = item_powerup_fish.png; sourceTree = "<group>"; };
+		9B4DF06817B4D85700AD5811 /* tile_floor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tile_floor.png; sourceTree = "<group>"; };
 		9BB2713F17B2267900D85FFE /* HelloOpenGL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HelloOpenGL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BB2714217B2267900D85FFE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9BB2714417B2267900D85FFE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -123,6 +127,23 @@
 			path = Cocos3DMathLib;
 			sourceTree = "<group>";
 		};
+		9B4DF06517B4D84600AD5811 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				9B4DF06617B4D85700AD5811 /* Art */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		9B4DF06617B4D85700AD5811 /* Art */ = {
+			isa = PBXGroup;
+			children = (
+				9B4DF06717B4D85700AD5811 /* item_powerup_fish.png */,
+				9B4DF06817B4D85700AD5811 /* tile_floor.png */,
+			);
+			path = Art;
+			sourceTree = "<group>";
+		};
 		9BB2713617B2267900D85FFE = {
 			isa = PBXGroup;
 			children = (
@@ -158,6 +179,7 @@
 		9BB2714817B2267900D85FFE /* HelloOpenGL */ = {
 			isa = PBXGroup;
 			children = (
+				9B4DF06517B4D84600AD5811 /* Resource */,
 				9B27BE0717B384C800DA42E1 /* Cocos3DMathLib */,
 				9BB2715117B2267A00D85FFE /* AppDelegate.h */,
 				9BB2715217B2267A00D85FFE /* AppDelegate.m */,
@@ -280,6 +302,8 @@
 				9BB2715917B2267A00D85FFE /* Default-568h@2x.png in Resources */,
 				9BB2718017B241D700D85FFE /* SimpleVertex.glsl in Resources */,
 				9BB2718217B2512A00D85FFE /* SimpleFragment.glsl in Resources */,
+				9B4DF06917B4D85700AD5811 /* item_powerup_fish.png in Resources */,
+				9B4DF06A17B4D85700AD5811 /* tile_floor.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
